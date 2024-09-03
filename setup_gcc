@@ -1,0 +1,28 @@
+set -e
+
+export BUILD=x86_64-apple-darwin
+export HOST=x86_64-apple-darwin
+export TARGET=x86_64-linux-gnu
+export PREFIX=/usr/local
+
+cd binutils/
+mkdir build/
+cd build/
+../configure --build=$BUILD --host=$HOST --target=$TARGET --prefix=$PREFIX --with-sysroot --disable-nls --disable-multilib --disable-gdb
+make -j 8 MAKEINFO=true
+sudo make install MAKEINFO=true
+cd ../../
+
+cd gcc/
+./contrib/download_prerequisites
+mkdir build/
+cd build/
+../configure --build=$BUILD --host=$HOST --target=$TARGET --prefix=$PREFIX --enable-languages=c,c++ --with-sysroot=$PREFIX/linux-sysroot --disable-nls --disable-multilib
+make -j 8 all-gcc
+make -j 8 all-target-libgcc
+make -j 8 all-target-libstdc++-v3
+sudo make install-gcc
+sudo make install-target-libgcc
+sudo make install-target-libstdc++-v3
+
+echo "$0: done"
