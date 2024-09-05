@@ -3,7 +3,8 @@ set -e
 export BUILD=x86_64-apple-darwin
 export HOST=x86_64-apple-darwin
 export TARGET=x86_64-linux-gnu
-export PREFIX=/usr/local
+export PREFIX=/opt/cross-compiler
+export SYSROOT=/opt/linux-sysroot
 
 cd binutils/
 mkdir build/
@@ -17,12 +18,9 @@ cd gcc/
 ./contrib/download_prerequisites
 mkdir build/
 cd build/
-../configure --build=$BUILD --host=$HOST --target=$TARGET --prefix=$PREFIX --enable-languages=c,c++ --with-sysroot=$PREFIX/linux-sysroot --disable-nls --disable-multilib
+../configure --build=$BUILD --host=$HOST --target=$TARGET --prefix=$PREFIX --enable-languages=c,c++ --with-sysroot=$SYSROOT --disable-nls --disable-multilib
 make -j 8 all-gcc
-make -j 8 all-target-libgcc
-make -j 8 all-target-libstdc++-v3
 sudo make install-gcc
-sudo make install-target-libgcc
-sudo make install-target-libstdc++-v3
+cd ../../
 
 echo "$0: done"
